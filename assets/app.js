@@ -143,9 +143,25 @@
   });
   table();
 
+  // contadores de cifras reales (al entrar en pantalla)
+  function countTo(el) {
+    var end = +el.dataset.c, st = null;
+    requestAnimationFrame(function step(ts) {
+      st = st || ts;
+      var p = Math.min((ts - st) / 1400, 1);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    });
+  }
+
   // aparición al hacer scroll
   var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    es.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add("in"); io.unobserve(e.target);
+        $$("[data-c]", e.target).forEach(countTo);
+      }
+    });
   }, { threshold: 0.12 });
   $$(".rv").forEach(function (el) { io.observe(el); });
 
