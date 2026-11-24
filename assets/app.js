@@ -1,6 +1,6 @@
 (function () {
   // Número de WhatsApp (formato internacional sin +, ej. 595981123456). Vacío = botón oculto.
-  var WHATSAPP = "";
+  var WHATSAPP = "51966376027";
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
