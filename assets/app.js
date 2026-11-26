@@ -165,6 +165,20 @@
   }, { threshold: 0.12 });
   $$(".rv").forEach(function (el) { io.observe(el); });
 
+  // productos: capturas
+  (function () {
+    var caps = ["Quién llegó, quién falta y quién está en almuerzo, al instante.", "App para tablet en la entrada: marca ingreso, almuerzo o salida con el rostro.", "Control de la operación día a día con Excel por rango de fechas.", "Censo del personal y carga masiva desde Excel."];
+    var tabs = $$("#ptabs button"), imgs = $$(".fimg img"), cap = $("#pcap"), cur = 0, timer;
+    function show(i) {
+      cur = i;
+      tabs.forEach(function (t, k) { t.classList.toggle("on", k === i); });
+      imgs.forEach(function (m, k) { m.classList.toggle("on", k === i); });
+      cap.textContent = caps[i];
+    }
+    tabs.forEach(function (t, k) { t.onclick = function () { clearInterval(timer); show(k); }; });
+    timer = setInterval(function () { show((cur + 1) % tabs.length); }, 5000);
+  })();
+
   // formulario
   var form = $("#form"), msg = $("#msg");
   form.addEventListener("submit", function (e) {
