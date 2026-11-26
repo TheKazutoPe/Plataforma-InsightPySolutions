@@ -165,18 +165,69 @@
   }, { threshold: 0.12 });
   $$(".rv").forEach(function (el) { io.observe(el); });
 
-  // productos: capturas
+  // productos: demo interactiva del kiosco + panel
   (function () {
-    var caps = ["Quién llegó, quién falta y quién está en almuerzo, al instante.", "App para tablet en la entrada: marca ingreso, almuerzo o salida con el rostro.", "Control de la operación día a día con Excel por rango de fechas.", "Censo del personal y carga masiva desde Excel."];
-    var tabs = $$("#ptabs button"), imgs = $$(".fimg img"), cap = $("#pcap"), cur = 0, timer;
-    function show(i) {
-      cur = i;
-      tabs.forEach(function (t, k) { t.classList.toggle("on", k === i); });
-      imgs.forEach(function (m, k) { m.classList.toggle("on", k === i); });
-      cap.textContent = caps[i];
+    var feed = $("#feed"); if (!feed) return;
+    var act = 419, S = { in: 286, lu: 34, out: 12 };
+    var Z = [{ n: "Mezzanine", t: 57, p: 38, c: "#8b5cf6" }, { n: "Estantería", t: 23, p: 17, c: "#22d3ee" }, { n: "Knapp", t: 31, p: 21, c: "#34d399" }];
+    var names = ["Ana Ríos", "Luis Paredes", "Marta Quispe", "Diego Salas", "Rosa Huamán", "Jorge Vega", "Lucía Torres", "Pedro Mamani", "Carla Díaz", "Iván Rojas", "Elena Cruz", "Mateo León"];
+    var cols = ["#8b5cf6", "#22d3ee", "#f472b6", "#fbbf24", "#34d399", "#fb7185"];
+    var lab = { in: "Ingreso", lu: "Almuerzo", out: "Salida" };
+    var map = { in: "k-in", lu: "k-lu", out: "k-out" };
+    function rnd(n) { return Math.floor(Math.random() * n); }
+    function hm(off) { var d = new Date(Date.now() - (off || 0) * 60000); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); }
+    function paint(key) {
+      $("#k-act").textContent = act;
+      ["in", "lu", "out"].forEach(function (k) { $("#" + map[k]).textContent = S[k]; });
+      $("#b-in").style.width = Math.round(S.in / act * 100) + "%";
+      $("#zones").innerHTML = Z.map(function (z) {
+        return '<div style="--c:' + z.c + '"><small>' + z.n + '</small><b>' + z.p + ' <span>/ ' + z.t + '</span></b><u><i style="width:' + Math.round(z.p / z.t * 100) + '%"></i></u></div>';
+      }).join("");
+      if (key) { var el = $("#" + map[key]); el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
     }
-    tabs.forEach(function (t, k) { t.onclick = function () { clearInterval(timer); show(k); }; });
-    timer = setInterval(function () { show((cur + 1) % tabs.length); }, 5000);
+    function row(name, a, time, quiet) {
+      var d = document.createElement("div"); d.className = "fr"; if (quiet) d.style.animation = "none";
+      var ini = name.split(" ").map(function (w) { return w[0]; }).join("");
+      d.style.setProperty("--c", cols[rnd(cols.length)]);
+      d.innerHTML = '<span class="av">' + ini + '</span><span class="nm">' + name + '</span><span class="tg ' + a + '">' + lab[a] + '</span><span class="tm">' + time + "</span>";
+      feed.insertBefore(d, feed.firstChild);
+      while (feed.children.length > 5) feed.removeChild(feed.lastChild);
+    }
+    function apply(a, name, quiet, time) {
+      if (a === "in") { S.in = Math.min(act, S.in + 1); var z = Z[rnd(Z.length)]; if (z.p < z.t) z.p++; }
+      else if (a === "lu") { S.lu++; }
+      else { S.out++; if (S.lu > 0) S.lu--; }
+      row(name, a, time || hm(0), quiet);
+      paint(quiet ? null : a);
+    }
+    [["in", 9], ["lu", 6], ["in", 4], ["out", 2]].forEach(function (e) { row(names[rnd(names.length)], e[0], hm(e[1]), true); });
+    paint();
+
+    var face = $("#face"), st = $("#tstate"), busy = false, lastUser = 0, vis = false;
+    function mark(a, byUser) {
+      if (busy) return; busy = true; if (byUser) lastUser = Date.now();
+      var name = names[rnd(names.length)];
+      face.className = "face scan"; st.textContent = "Reconociendo rostro…";
+      setTimeout(function () {
+        face.className = "face ok"; st.innerHTML = "✔ <b>" + name.split(" ")[0] + "</b> · " + lab[a] + " registrada";
+        apply(a, name);
+      }, 900);
+      setTimeout(function () { face.className = "face"; st.textContent = "Toca para marcar"; busy = false; }, 2700);
+    }
+    $$(".tbtns button").forEach(function (b) { b.onclick = function () { mark(b.dataset.a, true); }; });
+    new IntersectionObserver(function (e) { vis = e[0].isIntersecting; }, { threshold: 0.3 }).observe($("#stage"));
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInterval(function () {
+        if (!vis || Date.now() - lastUser < 7000) return;
+        var r = Math.random(); mark(r < 0.6 ? "in" : r < 0.8 ? "lu" : "out", false);
+      }, 4200);
+    }
+
+    // capturas ampliables
+    var lb = $("#lb"), lbi = $("img", lb);
+    $$(".sh").forEach(function (b) { b.onclick = function () { lbi.src = b.dataset.src; lb.classList.add("on"); }; });
+    lb.onclick = function () { lb.classList.remove("on"); };
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") lb.classList.remove("on"); });
   })();
 
   // formulario
