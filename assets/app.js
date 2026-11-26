@@ -169,7 +169,7 @@
   (function () {
     var feed = $("#feed"); if (!feed) return;
     var act = 419, S = { in: 286, lu: 34, out: 12 };
-    var Z = [{ n: "Mezzanine", t: 57, p: 38, c: "#8b5cf6" }, { n: "Estantería", t: 23, p: 17, c: "#22d3ee" }, { n: "Knapp", t: 31, p: 21, c: "#34d399" }];
+    var Z = [{ n: "Zona A", t: 57, p: 38, c: "#8b5cf6" }, { n: "Zona B", t: 23, p: 17, c: "#22d3ee" }, { n: "Zona C", t: 31, p: 21, c: "#34d399" }];
     var names = ["Ana Ríos", "Luis Paredes", "Marta Quispe", "Diego Salas", "Rosa Huamán", "Jorge Vega", "Lucía Torres", "Pedro Mamani", "Carla Díaz", "Iván Rojas", "Elena Cruz", "Mateo León"];
     var cols = ["#8b5cf6", "#22d3ee", "#f472b6", "#fbbf24", "#34d399", "#fb7185"];
     var lab = { in: "Ingreso", lu: "Almuerzo", out: "Salida" };
