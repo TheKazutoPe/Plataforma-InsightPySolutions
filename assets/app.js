@@ -41,7 +41,7 @@
   rot.style.transition = "opacity .35s, transform .35s";
 
   // marquesina
-  var tags = ["Desarrollo a medida", "Automatización", "Análisis de datos", "Tableros", "Sistemas web", "Integraciones", "Soporte continuo", "Asesoría"];
+  var tags = ["Desarrollo a medida", "Automatización", "Análisis de datos", "Tableros", "Sistemas web", "Integraciones", "Instalación en campo", "Infraestructura", "Soporte continuo", "Asesoría"];
   $("#track").innerHTML = tags.concat(tags, tags, tags).map(function (w) { return "<span>" + w + "</span>"; }).join("");
 
   // terminal con tipeo
